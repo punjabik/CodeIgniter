@@ -225,6 +225,13 @@ class CI_Upload {
 	public $remove_spaces = TRUE;
 
 	/**
+	 * Remove diacritics flag
+	 *
+	 * @var	bool
+	 */
+        public $remove_diacritics = TRUE;
+	
+	/**
 	 * MIME detection flag
 	 *
 	 * @var	bool
@@ -527,6 +534,13 @@ class CI_Upload {
 			$this->file_name = preg_replace('/\s+/', '_', $this->file_name);
 		}
 
+		// Remove diacritics in the name
+		if ($this->remove_diacritics == TRUE)
+		{
+			setlocale(LC_ALL, "cs_CZ.UTF-8");
+			$this->file_name = iconv("utf-8", "us-ascii//TRANSLIT", $this->file_name);
+		}
+		
 		if ($this->file_ext_tolower && ($ext_length = strlen($this->file_ext)))
 		{
 			// file_ext was previously lower-cased by a get_extension() call
