@@ -141,11 +141,11 @@ class CI_Session {
 			&& ($regenerate_time = config_item('sess_time_to_update')) > 0
 		)
 		{
-			if ( ! isset($_SESSION['__ci_last_regenerate']))
+			if ( ! isset($_SESSION['_sf2_attributes']['__ci_last_regenerate']))
 			{
-				$_SESSION['__ci_last_regenerate'] = time();
+				$_SESSION['_sf2_attributes']['__ci_last_regenerate'] = time();
 			}
-			elseif ($_SESSION['__ci_last_regenerate'] < (time() - $regenerate_time))
+			elseif ($_SESSION['_sf2_attributes']['__ci_last_regenerate'] < (time() - $regenerate_time))
 			{
 				$this->sess_regenerate((bool) config_item('sess_regenerate_destroy'));
 			}
@@ -456,29 +456,29 @@ class CI_Session {
 	 */
 	protected function _ci_init_vars()
 	{
-		if ( ! empty($_SESSION['__ci_vars']))
+		if ( ! empty($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
 			$current_time = time();
 
-			foreach ($_SESSION['__ci_vars'] as $key => &$value)
+			foreach ($_SESSION['_sf2_attributes']['__ci_vars'] as $key => &$value)
 			{
 				if ($value === 'new')
 				{
-					$_SESSION['__ci_vars'][$key] = 'old';
+					$_SESSION['_sf2_attributes']['__ci_vars'][$key] = 'old';
 				}
 				elseif ($value === 'old' || $value < $current_time)
 				{
-					unset($_SESSION[$key], $_SESSION['__ci_vars'][$key]);
+					unset($_SESSION['_sf2_attributes'][$key], $_SESSION['_sf2_attributes']['__ci_vars'][$key]);
 				}
 			}
 
-			if (empty($_SESSION['__ci_vars']))
+			if (empty($_SESSION['_sf2_attributes']['__ci_vars']))
 			{
-				unset($_SESSION['__ci_vars']);
+				unset($_SESSION['_sf2_attributes']['__ci_vars']);
 			}
 		}
 
-		$this->userdata =& $_SESSION;
+		$this->userdata =& $_SESSION['_sf2_attributes'];
 	}
 
 	// ------------------------------------------------------------------------
@@ -495,7 +495,7 @@ class CI_Session {
 		{
 			for ($i = 0, $c = count($key); $i < $c; $i++)
 			{
-				if ( ! isset($_SESSION[$key[$i]]))
+				if ( ! isset($_SESSION['_sf2_attributes'][$key[$i]]))
 				{
 					return FALSE;
 				}
@@ -503,14 +503,14 @@ class CI_Session {
 
 			$new = array_fill_keys($key, 'new');
 
-			$_SESSION['__ci_vars'] = isset($_SESSION['__ci_vars'])
-				? array_merge($_SESSION['__ci_vars'], $new)
+			$_SESSION['_sf2_attributes']['__ci_vars'] = isset($_SESSION['_sf2_attributes']['__ci_vars'])
+				? array_merge($_SESSION['_sf2_attributes']['__ci_vars'], $new)
 				: $new;
 
 			return TRUE;
 		}
 
-		if ( ! isset($_SESSION[$key]))
+		if ( ! isset($_SESSION['_sf2_attributes'][$key]))
 		{
 			return FALSE;
 		}
@@ -528,15 +528,15 @@ class CI_Session {
 	 */
 	public function get_flash_keys()
 	{
-		if ( ! isset($_SESSION['__ci_vars']))
+		if ( ! isset($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
 			return array();
 		}
 
 		$keys = array();
-		foreach (array_keys($_SESSION['__ci_vars']) as $key)
+		foreach (array_keys($_SESSION['_sf2_attributes']['__ci_vars']) as $key)
 		{
-			is_int($_SESSION['__ci_vars'][$key]) OR $keys[] = $key;
+			is_int($_SESSION['_sf2_attributes']['__ci_vars'][$key]) OR $keys[] = $key;
 		}
 
 		return $keys;
@@ -552,7 +552,7 @@ class CI_Session {
 	 */
 	public function unmark_flash($key)
 	{
-		if (empty($_SESSION['__ci_vars']))
+		if (empty($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
 			return;
 		}
@@ -561,15 +561,15 @@ class CI_Session {
 
 		foreach ($key as $k)
 		{
-			if (isset($_SESSION['__ci_vars'][$k]) && ! is_int($_SESSION['__ci_vars'][$k]))
+			if (isset($_SESSION['_sf2_attributes']['__ci_vars'][$k]) && ! is_int($_SESSION['_sf2_attributes']['__ci_vars'][$k]))
 			{
-				unset($_SESSION['__ci_vars'][$k]);
+				unset($_SESSION['_sf2_attributes']['__ci_vars'][$k]);
 			}
 		}
 
-		if (empty($_SESSION['__ci_vars']))
+		if (empty($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
-			unset($_SESSION['__ci_vars']);
+			unset($_SESSION['_sf2_attributes']['__ci_vars']);
 		}
 	}
 
@@ -603,7 +603,7 @@ class CI_Session {
 					$v += time();
 				}
 
-				if ( ! isset($_SESSION[$k]))
+				if ( ! isset($_SESSION['_sf2_attributes'][$k]))
 				{
 					return FALSE;
 				}
@@ -611,19 +611,19 @@ class CI_Session {
 				$temp[$k] = $v;
 			}
 
-			$_SESSION['__ci_vars'] = isset($_SESSION['__ci_vars'])
-				? array_merge($_SESSION['__ci_vars'], $temp)
+			$_SESSION['_sf2_attributes']['__ci_vars'] = isset($_SESSION['_sf2_attributes']['__ci_vars'])
+				? array_merge($_SESSION['_sf2_attributes']['__ci_vars'], $temp)
 				: $temp;
 
 			return TRUE;
 		}
 
-		if ( ! isset($_SESSION[$key]))
+		if ( ! isset($_SESSION['_sf2_attributes'][$key]))
 		{
 			return FALSE;
 		}
 
-		$_SESSION['__ci_vars'][$key] = $ttl;
+		$_SESSION['_sf2_attributes']['__ci_vars'][$key] = $ttl;
 		return TRUE;
 	}
 
@@ -636,15 +636,15 @@ class CI_Session {
 	 */
 	public function get_temp_keys()
 	{
-		if ( ! isset($_SESSION['__ci_vars']))
+		if ( ! isset($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
 			return array();
 		}
 
 		$keys = array();
-		foreach (array_keys($_SESSION['__ci_vars']) as $key)
+		foreach (array_keys($_SESSION['_sf2_attributes']['__ci_vars']) as $key)
 		{
-			is_int($_SESSION['__ci_vars'][$key]) && $keys[] = $key;
+			is_int($_SESSION['_sf2_attributes']['__ci_vars'][$key]) && $keys[] = $key;
 		}
 
 		return $keys;
@@ -660,7 +660,7 @@ class CI_Session {
 	 */
 	public function unmark_temp($key)
 	{
-		if (empty($_SESSION['__ci_vars']))
+		if (empty($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
 			return;
 		}
@@ -669,15 +669,15 @@ class CI_Session {
 
 		foreach ($key as $k)
 		{
-			if (isset($_SESSION['__ci_vars'][$k]) && is_int($_SESSION['__ci_vars'][$k]))
+			if (isset($_SESSION['_sf2_attributes']['__ci_vars'][$k]) && is_int($_SESSION['_sf2_attributes']['__ci_vars'][$k]))
 			{
-				unset($_SESSION['__ci_vars'][$k]);
+				unset($_SESSION['_sf2_attributes']['__ci_vars'][$k]);
 			}
 		}
 
-		if (empty($_SESSION['__ci_vars']))
+		if (empty($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
-			unset($_SESSION['__ci_vars']);
+			unset($_SESSION['_sf2_attributes']['__ci_vars']);
 		}
 	}
 
@@ -693,9 +693,9 @@ class CI_Session {
 	{
 		// Note: Keep this order the same, just in case somebody wants to
 		//       use 'session_id' as a session data key, for whatever reason
-		if (isset($_SESSION[$key]))
+		if (isset($_SESSION['_sf2_attributes'][$key]))
 		{
-			return $_SESSION[$key];
+			return $_SESSION['_sf2_attributes'][$key];
 		}
 		elseif ($key === 'session_id')
 		{
@@ -720,7 +720,7 @@ class CI_Session {
 			return (session_status() === PHP_SESSION_ACTIVE);
 		}
 
-		return isset($_SESSION[$key]);
+		return isset($_SESSION['_sf2_attributes'][$key]);
 	}
 
 	// ------------------------------------------------------------------------
@@ -734,7 +734,7 @@ class CI_Session {
 	 */
 	public function __set($key, $value)
 	{
-		$_SESSION[$key] = $value;
+		$_SESSION['_sf2_attributes'][$key] = $value;
 	}
 
 	// ------------------------------------------------------------------------
@@ -763,7 +763,7 @@ class CI_Session {
 	 */
 	public function sess_regenerate($destroy = FALSE)
 	{
-		$_SESSION['__ci_last_regenerate'] = time();
+		$_SESSION['_sf2_attributes']['__ci_last_regenerate'] = time();
 		session_regenerate_id($destroy);
 	}
 
@@ -778,7 +778,7 @@ class CI_Session {
 	 */
 	public function &get_userdata()
 	{
-		return $_SESSION;
+		return $_SESSION['_sf2_attributes'];
 	}
 
 	// ------------------------------------------------------------------------
@@ -795,9 +795,9 @@ class CI_Session {
 	{
 		if (isset($key))
 		{
-			return isset($_SESSION[$key]) ? $_SESSION[$key] : NULL;
+			return isset($_SESSION['_sf2_attributes'][$key]) ? $_SESSION['_sf2_attributes'][$key] : NULL;
 		}
-		elseif (empty($_SESSION))
+		elseif (empty($_SESSION['_sf2_attributes']))
 		{
 			return array();
 		}
@@ -809,11 +809,11 @@ class CI_Session {
 			$this->get_temp_keys()
 		);
 
-		foreach (array_keys($_SESSION) as $key)
+		foreach (array_keys($_SESSION['_sf2_attributes']) as $key)
 		{
 			if ( ! in_array($key, $_exclude, TRUE))
 			{
-				$userdata[$key] = $_SESSION[$key];
+				$userdata[$key] = $_SESSION['_sf2_attributes'][$key];
 			}
 		}
 
@@ -837,13 +837,13 @@ class CI_Session {
 		{
 			foreach ($data as $key => &$value)
 			{
-				$_SESSION[$key] = $value;
+				$_SESSION['_sf2_attributes'][$key] = $value;
 			}
 
 			return;
 		}
 
-		$_SESSION[$data] = $value;
+		$_SESSION['_sf2_attributes'][$data] = $value;
 	}
 
 	// ------------------------------------------------------------------------
@@ -862,13 +862,13 @@ class CI_Session {
 		{
 			foreach ($key as $k)
 			{
-				unset($_SESSION[$k]);
+				unset($_SESSION['_sf2_attributes'][$k]);
 			}
 
 			return;
 		}
 
-		unset($_SESSION[$key]);
+		unset($_SESSION['_sf2_attributes'][$key]);
 	}
 
 	// ------------------------------------------------------------------------
@@ -897,7 +897,7 @@ class CI_Session {
 	 */
 	public function has_userdata($key)
 	{
-		return isset($_SESSION[$key]);
+		return isset($_SESSION['_sf2_attributes'][$key]);
 	}
 
 	// ------------------------------------------------------------------------
@@ -914,18 +914,18 @@ class CI_Session {
 	{
 		if (isset($key))
 		{
-			return (isset($_SESSION['__ci_vars'], $_SESSION['__ci_vars'][$key], $_SESSION[$key]) && ! is_int($_SESSION['__ci_vars'][$key]))
-				? $_SESSION[$key]
+			return (isset($_SESSION['_sf2_attributes']['__ci_vars'], $_SESSION['_sf2_attributes']['__ci_vars'][$key], $_SESSION['_sf2_attributes'][$key]) && ! is_int($_SESSION['_sf2_attributes']['__ci_vars'][$key]))
+				? $_SESSION['_sf2_attributes'][$key]
 				: NULL;
 		}
 
 		$flashdata = array();
 
-		if ( ! empty($_SESSION['__ci_vars']))
+		if ( ! empty($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
-			foreach ($_SESSION['__ci_vars'] as $key => &$value)
+			foreach ($_SESSION['_sf2_attributes']['__ci_vars'] as $key => &$value)
 			{
-				is_int($value) OR $flashdata[$key] = $_SESSION[$key];
+				is_int($value) OR $flashdata[$key] = $_SESSION['_sf2_attributes'][$key];
 			}
 		}
 
@@ -978,18 +978,18 @@ class CI_Session {
 	{
 		if (isset($key))
 		{
-			return (isset($_SESSION['__ci_vars'], $_SESSION['__ci_vars'][$key], $_SESSION[$key]) && is_int($_SESSION['__ci_vars'][$key]))
-				? $_SESSION[$key]
+			return (isset($_SESSION['_sf2_attributes']['__ci_vars'], $_SESSION['_sf2_attributes']['__ci_vars'][$key], $_SESSION['_sf2_attributes'][$key]) && is_int($_SESSION['_sf2_attributes']['__ci_vars'][$key]))
+				? $_SESSION['_sf2_attributes'][$key]
 				: NULL;
 		}
 
 		$tempdata = array();
 
-		if ( ! empty($_SESSION['__ci_vars']))
+		if ( ! empty($_SESSION['_sf2_attributes']['__ci_vars']))
 		{
-			foreach ($_SESSION['__ci_vars'] as $key => &$value)
+			foreach ($_SESSION['_sf2_attributes']['__ci_vars'] as $key => &$value)
 			{
-				is_int($value) && $tempdata[$key] = $_SESSION[$key];
+				is_int($value) && $tempdata[$key] = $_SESSION['_sf2_attributes'][$key];
 			}
 		}
 
