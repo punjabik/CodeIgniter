@@ -337,7 +337,7 @@ class CI_Loader {
 				}
 
 				require_once($mod_path.'models/'.$path.$model.'.php');
-				if ( ! class_exists($model, FALSE))
+				if ( ! class_exists('App\legacy\codeigniter\models\\' . $model, FALSE))
 				{
 					throw new RuntimeException($mod_path."models/".$path.$model.".php exists, but doesn't declare class ".$model);
 				}
@@ -345,7 +345,7 @@ class CI_Loader {
 				break;
 			}
 
-			if ( ! class_exists($model, FALSE))
+			if ( ! class_exists('App\legacy\codeigniter\models\\' . $model, FALSE))
 			{
 				throw new RuntimeException('Unable to locate the model you have specified: '.$model);
 			}
@@ -356,8 +356,11 @@ class CI_Loader {
 		}
 
 		$this->_ci_models[] = $name;
-		$model = new $model();
+		$model_name_with_namespace = 'App\legacy\codeigniter\models\\' . $model;
+
+		$model = new $model_name_with_namespace;
 		$CI->$name = $model;
+		
 		log_message('info', 'Model "'.get_class($model).'" initialized');
 		return $this;
 	}
